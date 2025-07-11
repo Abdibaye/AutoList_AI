@@ -48,7 +48,7 @@ const data = {
     },
     {
       title: "Generate",
-      url: "#",
+      url: "/admin/generate",
       icon: IconListDetails,
     },
     {
