@@ -7,7 +7,7 @@ import {
   ContentTabs, 
   generateContent, 
   type GenerateFormData 
-} from "./_component";
+} from ".";
 
 export default function GenerateContentPage() {
   // Form state
@@ -39,9 +39,15 @@ export default function GenerateContentPage() {
     e.preventDefault();
     setLoading(true);
     setContent(null);
+    
     try {
       const result = await generateContent(form);
       setContent(result);
+      toast.success("Content generated successfully!");
+    } catch (error) {
+      console.error('Generation failed:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to generate content';
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -57,6 +63,11 @@ export default function GenerateContentPage() {
     try {
       const result = await generateContent(form);
       setContent((prev) => ({ ...prev, [platform]: result[platform] }));
+      toast.success(`${platform.charAt(0).toUpperCase() + platform.slice(1)} content regenerated!`);
+    } catch (error) {
+      console.error('Regeneration failed:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to regenerate content';
+      toast.error(errorMessage);
     } finally {
       setRegenLoading((prev) => ({ ...prev, [platform]: false }));
     }
