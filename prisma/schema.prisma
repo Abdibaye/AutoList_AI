@@ -30,6 +30,7 @@ model User {
   accounts        Account[]
 
   @@map("user")
+  Listing Listing[]
 }
 
 model Workspace {
@@ -98,4 +99,28 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
+}
+
+model Listing {
+  id          String           @id @default(uuid())
+  userId      String
+  user        User             @relation(fields: [userId], references: [id])
+  title       String
+  price       Int
+  location    String
+  bedrooms    Int
+  bathrooms   Int
+  features    String
+  tone        String
+  posts       GeneratedPost[]
+  createdAt   DateTime         @default(now())
+}
+
+model GeneratedPost {
+  id         String   @id @default(uuid())
+  listingId  String
+  listing    Listing  @relation(fields: [listingId], references: [id])
+  platform   String   // e.g. Instagram, Facebook, Twitter, LinkedIn
+  content    String
+  createdAt  DateTime @default(now())
 }

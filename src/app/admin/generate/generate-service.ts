@@ -54,3 +54,41 @@ export async function generateContent(form: GenerateFormData) {
     throw error;
   }
 } 
+
+// Save Listing API call
+export async function saveListing({ userId, form, content }: {
+  userId: string;
+  form: GenerateFormData;
+  content: { [platform: string]: string };
+}) {
+  // Prepare posts array
+  const posts = [
+    { platform: 'Instagram', content: content.instagram },
+    { platform: 'Facebook', content: content.facebook },
+    { platform: 'Twitter', content: content.twitter },
+    { platform: 'LinkedIn', content: content.linkedin },
+  ];
+
+  const response = await fetch('/api/save-listing', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      userId,
+      title: form.title,
+      price: Number(form.price),
+      location: form.location,
+      bedrooms: form.bedrooms,
+      bathrooms: form.bathrooms,
+      features: form.features,
+      tone: form.tone,
+      posts,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+  }
+
+  return response.json();
+} 

@@ -8,6 +8,8 @@ import {
   generateContent, 
   type GenerateFormData 
 } from ".";
+import { saveListing } from "./generate-service";
+import { authClient } from "@/lib/auth-client";
 
 export default function GenerateContentPage() {
   // Form state
@@ -24,6 +26,29 @@ export default function GenerateContentPage() {
   const [content, setContent] = useState<{ [platform: string]: string } | null>(null);
   const [activeTab, setActiveTab] = useState("instagram");
   const [regenLoading, setRegenLoading] = useState<{ [platform: string]: boolean }>({});
+
+  // Session state
+  const [session, setSession] = useState<any>(null);
+  const [sessionLoading, setSessionLoading] = useState(true);
+  const [sessionError, setSessionError] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    authClient.getSession()
+      .then(({ data, error }) => {
+        if (error) {
+          setSessionError(error.message || "Failed to load session");
+        } else {
+          setSession(data);
+        }
+        setSessionLoading(false);
+      })
+      .catch((err) => {
+        setSessionError(err.message || "Failed to load session");
+        setSessionLoading(false);
+      });
+  }, []);
+
+  const userId = session?.user?.id;
 
   // Handlers
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -73,6 +98,29 @@ export default function GenerateContentPage() {
     }
   };
 
+  // Add save handler
+  const handleSaveListing = async () => {
+    if (!content) {
+      toast.error("Generate content before saving.");
+      return;
+    }
+    if (!userId) {
+      toast.error("User not authenticated.");
+      return;
+    }
+    try {
+      const result = await saveListing({ userId, form, content });
+      toast.success("Listing and posts saved!");
+      // Optionally, redirect or update UI
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to save listing';
+      toast.error(errorMessage);
+    }
+  };
+
+  if (sessionLoading) return <div>Loading session...</div>;
+  if (sessionError) return <div>Failed to load session: {sessionError}</div>;
+
   return (
     <div className="flex flex-col md:flex-row gap-8 w-full max-w-6xl mx-auto">
       <GenerateForm
@@ -82,14 +130,24 @@ export default function GenerateContentPage() {
         onChange={handleChange}
         onToneChange={handleToneChange}
       />
-      <ContentTabs
-        content={content}
-        activeTab={activeTab}
-        regenLoading={regenLoading}
-        onTabChange={setActiveTab}
-        onCopy={handleCopy}
-        onRegenerate={handleRegenerate}
-      />
+      <div className="flex flex-col gap-4 w-full">
+        <ContentTabs
+          content={content}
+          activeTab={activeTab}
+          regenLoading={regenLoading}
+          onTabChange={setActiveTab}
+          onCopy={handleCopy}
+          onRegenerate={handleRegenerate}
+        />
+        {/* Save Listing Button */}
+        <button
+          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
+          onClick={handleSaveListing}
+          disabled={!content || loading}
+        >
+          Save Listing & Posts
+        </button>
+      </div>
     </div>
   );
 }
