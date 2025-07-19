@@ -52,9 +52,9 @@ const data = {
       icon: IconListDetails,
     },
     {
-      title: "Analytics",
-      url: "#",
-      icon: IconChartBar,
+      title: "Library",
+      url: "/admin/library",
+      icon: IconFolder,
     },
     {
       title: "Team",

@@ -46,8 +46,7 @@ export function GenerateForm({ form, loading, onSubmit, onChange, onToneChange }
             name="title" 
             id="title" 
             value={form.title} 
-            onChange={onChange} 
-            required 
+            onChange={onChange}  
             placeholder="e.g. Modern 2BR Apartment" 
           />
         </div>
@@ -58,7 +57,6 @@ export function GenerateForm({ form, loading, onSubmit, onChange, onToneChange }
             id="price" 
             value={form.price} 
             onChange={onChange} 
-            required 
             placeholder="$2000/mo" 
           />
         </div>
@@ -68,8 +66,7 @@ export function GenerateForm({ form, loading, onSubmit, onChange, onToneChange }
             name="location" 
             id="location" 
             value={form.location} 
-            onChange={onChange} 
-            required 
+            onChange={onChange}  
             placeholder="e.g. Downtown LA" 
           />
         </div>
@@ -82,8 +79,7 @@ export function GenerateForm({ form, loading, onSubmit, onChange, onToneChange }
               type="number" 
               min={0} 
               value={form.bedrooms} 
-              onChange={onChange} 
-              required 
+              onChange={onChange}  
             />
           </div>
           <div className="flex-1">
@@ -94,8 +90,7 @@ export function GenerateForm({ form, loading, onSubmit, onChange, onToneChange }
               type="number" 
               min={0} 
               value={form.bathrooms} 
-              onChange={onChange} 
-              required 
+              onChange={onChange}  
             />
           </div>
         </div>

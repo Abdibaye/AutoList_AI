@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import { SaveListingSchema } from '@/lib/validation';
 
 const prisma = new PrismaClient();
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+    const parseResult = SaveListingSchema.safeParse(body);
+    if (!parseResult.success) {
+      return NextResponse.json({ error: 'Validation error', details: parseResult.error.flatten() }, { status: 400 });
+    }
     const {
       userId,
       title,
@@ -15,36 +20,8 @@ export async function POST(req: NextRequest) {
       bathrooms,
       features,
       tone,
-      posts, // Array of { platform, content }
-    } = body;
-
-    if (userId === undefined || userId === null || userId === "") {
-      return NextResponse.json({ error: 'Missing required field: userId' }, { status: 400 });
-    }
-    if (!title) {
-      return NextResponse.json({ error: 'Missing required field: title' }, { status: 400 });
-    }
-    if (price === undefined || price === null || price === "") {
-      return NextResponse.json({ error: 'Missing required field: price' }, { status: 400 });
-    }
-    if (!location) {
-      return NextResponse.json({ error: 'Missing required field: location' }, { status: 400 });
-    }
-    if (bedrooms === undefined || bedrooms === null || bedrooms === "") {
-      return NextResponse.json({ error: 'Missing required field: bedrooms' }, { status: 400 });
-    }
-    if (bathrooms === undefined || bathrooms === null || bathrooms === "") {
-      return NextResponse.json({ error: 'Missing required field: bathrooms' }, { status: 400 });
-    }
-    if (!features) {
-      return NextResponse.json({ error: 'Missing required field: features' }, { status: 400 });
-    }
-    if (!tone) {
-      return NextResponse.json({ error: 'Missing required field: tone' }, { status: 400 });
-    }
-    if (!posts) {
-      return NextResponse.json({ error: 'Missing required field: posts' }, { status: 400 });
-    }
+      posts,
+    } = parseResult.data;
 
     // features is a string in the schema, so join if array
     const featuresString = Array.isArray(features) ? features.join(', ') : features;
