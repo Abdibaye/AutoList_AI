@@ -10,6 +10,7 @@ import {
 } from ".";
 import { saveListing } from "./generate-service";
 import { authClient } from "@/lib/auth-client";
+import { Button } from "@/components/ui/button";
 
 export default function GenerateContentPage() {
   // Form state
@@ -140,13 +141,13 @@ export default function GenerateContentPage() {
           onRegenerate={handleRegenerate}
         />
         {/* Save Listing Button */}
-        <button
-          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
+        <Button
+          className="mt-4 px-4 py-2 rounded disabled:opacity-50"
           onClick={handleSaveListing}
           disabled={!content || loading}
         >
           Save Listing & Posts
-        </button>
+        </Button>
       </div>
     </div>
   );
